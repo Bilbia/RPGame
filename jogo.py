@@ -24,6 +24,7 @@ class Game: # o que vai aparecer na tela do jogo
         self.screen = pg.display.set_mode((settings.WIDTH, settings.HEIGHT)) #escolhendo largura e altura da malha quadriculada
         pg.display.set_caption(settings.TITLE) 
         self.clock = pg.time.Clock()
+        pg.key.set_repeat(500,100)
         self.load_data()
         
     def load_data(self):
@@ -31,7 +32,11 @@ class Game: # o que vai aparecer na tela do jogo
         
     def new(self):
         self.all_sprites = pg.sprite.Group()
+        self.walls = pg.sprite.Group()
         self.player = sprites.Player(self, 0, 0)
+        for x in range(10,20):
+            sprites.Wall(self, x, 5)
+           
            
        
     def run(self):
