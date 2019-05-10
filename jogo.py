@@ -2,7 +2,7 @@
 """
 Created on Sun May  5 16:26:47 2019
 
-@author: Mandita
+@author: NAmandita
 """
 
 import pygame as pg
@@ -35,7 +35,7 @@ class Game: # o que vai aparecer na tela do jogo
         self.walls = pg.sprite.Group()
         self.player = sprites.Player(self, 0, 0)
         for x in range(10,20):
-            sprites.Wall(self, x, 5)
+            sprites.Wall(self, x, 10)
            
            
        

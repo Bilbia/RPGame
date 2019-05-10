@@ -24,10 +24,14 @@ class Player (pg.sprite.Sprite):
             self.y += dy
         
     def colisao_paredes (self, dx = 0, dy = 0):
+        colidiu = 0
         for wall in self.game.walls:
             if wall.x == self.x + dx and wall.y == self.y + dy:
-                print("com parede")
-                return True
+                colidiu = 1
+        if colidiu == 1:
+            print("com parede")
+            return True
+        else:
             print("sem parede")
             return False
         
