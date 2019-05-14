@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Sun May  5 17:28:27 2019
-
-@author: Mandita
-"""
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -25,3 +19,7 @@ BGCOLOR = DARKGREY
 TILESIZE = 32
 GRIDWIDTH = WIDTH / TILESIZE
 GRIDHEIGHT = HEIGHT / TILESIZE
+
+#Player Settings #Yama
+
+PLAYER_SPEED = 300

@@ -1,13 +1,8 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Mon May  6 07:21:05 2019
 
-@author: User
-"""
 import pygame as pg
 import settings
 
-class Player (pg.sprite.Sprite):   
+class Player(pg.sprite.Sprite):   
     def __init__(self, game, x, y):
         self.groups = game.all_sprites
         pg.sprite.Sprite.__init__(self, self.groups)
@@ -15,29 +10,54 @@ class Player (pg.sprite.Sprite):
         self.image = pg.Surface((settings.TILESIZE, settings.TILESIZE))
         self.image.fill(settings.YELLOW)
         self.rect = self.image.get_rect()
-        self.x = x
-        self.y = y
+        self.vx, self.vy = 0, 0 #Yama
+        self.x = x * settings.TILESIZE
+        self.y = y * settings.TILESIZE
+    
+    def get_keys(self): #Yama
+        self.vx, self.vy = 0, 0
+        keys = pg.key.get_pressed()
+        if keys[pg.K_LEFT] or keys[pg.K_a]:
+            self.vx = -settings.PLAYER_SPEED     
+        if keys[pg.K_RIGHT] or keys[pg.K_d]:
+            self.vx = settings.PLAYER_SPEED            
+        if keys[pg.K_UP] or keys[pg.K_w]:
+            self.vy = -settings.PLAYER_SPEED            
+        if keys[pg.K_DOWN] or keys[pg.K_s]:
+            self.vy = settings.PLAYER_SPEED
+        if self.vx != 0 and self.vy != 0:
+            self.vx *= 0.7071
+            self.vy *= 0.7071
         
-    def move(self, dx = 0, dy = 0):
-        if not self.colisao_paredes(dx,dy):
-            self.x += dx
-            self.y += dy
+    def colisao_paredes(self, dir): #Yama
+        if dir == 'x':
+            hits = pg.sprite.spritecollide(self, self.game.walls, False)
+            if hits:
+                if self.vx > 0:
+                    self.x = hits[0].rect.left - self.rect.width
+                if self.vx < 0:
+                    self.x = hits[0].rect.right
+                self.vx = 0
+                self.rect.x = self.x
+        if dir == 'y':
+            hits = pg.sprite.spritecollide(self, self.game.walls, False)
+            if hits:
+                if self.vy > 0:
+                    self.y = hits[0].rect.top - self.rect.height
+                if self.vy < 0:
+                    self.y = hits[0].rect.bottom
+                self.vy = 0
+                self.rect.y = self.y
         
-    def colisao_paredes (self, dx = 0, dy = 0):
-        colidiu = 0
-        for wall in self.game.walls:
-            if wall.x == self.x + dx and wall.y == self.y + dy:
-                colidiu = 1
-        if colidiu == 1:
-            print("com parede")
-            return True
-        else:
-            print("sem parede")
-            return False
+    def update(self):
+        self.get_keys()
+        self.x += self.vx * self.game.dt
+        self.y += self.vy * self.game.dt
+        self.rect.x = self.x
+        self.colisao_paredes('x')
+        self.rect.y = self.y
+        self.colisao_paredes('y')
         
-    def update (self):
-        self.rect.x = self.x * settings.TILESIZE
-        self.rect.y = self.y * settings.TILESIZE
         
 class Wall(pg.sprite.Sprite):
     def __init__(self,game,x,y):
@@ -51,3 +71,24 @@ class Wall(pg.sprite.Sprite):
         self.y = y
         self.rect.x = x * settings.TILESIZE
         self.rect.y = y * settings.TILESIZE
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
