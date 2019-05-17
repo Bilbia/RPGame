@@ -18,7 +18,7 @@ TITLE = " Teste de movimento "
 BGCOLOR = DARKGREY
 
 #ainda a decidir as dimensões, ent vou deixar o que está no tutorial
-TILESIZE = 32
+TILESIZE = 64
 GRIDWIDTH = WIDTH / TILESIZE
 GRIDHEIGHT = HEIGHT / TILESIZE
 
