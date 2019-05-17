@@ -25,3 +25,4 @@ GRIDHEIGHT = HEIGHT / TILESIZE
 #Player Settings #Yama
 
 PLAYER_SPEED = 300
+PLAYER_IMG = 'raposa pequena.png'   #imagem do player
