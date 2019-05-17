@@ -15,11 +15,11 @@ class Game: # o que vai aparecer na tela do jogo
     
     def __init__(self): #--> __init__ : construtor d elementos do jogo
         pg.init()
-        self.screen = pg.display.set_mode((settings.WIDTH, settings.HEIGHT)) #escolhendo largura e altura da malha quadriculada
+        self.screen = pg.display.set_mode((settings.WIDTH, settings.HEIGHT),pg.RESIZABLE) #escolhendo largura e altura da malha quadriculada
         pg.display.set_caption(settings.TITLE) 
         self.clock = pg.time.Clock()
         self.load_data()
-        
+
     def load_data(self):
         game_folder = path.dirname(__file__)
         self.map = tilemap.Map(path.join(game_folder, 'map2.txt'))
@@ -33,7 +33,7 @@ class Game: # o que vai aparecer na tela do jogo
                     sprites.Wall(self, col, row)
                 if tile == 'P':
                     self.player = sprites.Player(self, col, row)
-        self.camera = tilemap.Camera()
+        self.camera = tilemap.Camera(self.map.width, self.map.height)
            
     def run(self):
         self.playing = True
@@ -75,6 +75,21 @@ class Game: # o que vai aparecer na tela do jogo
                 if event.key == pg.K_ESCAPE:
                     self.quit()
                 
+                #arrumar o tamanho da tela
+                if event.key == pg.K_f and pg.key.get_mods() & pg.KMOD_ALT:
+                    #se apertar ALT + F, a tela fica fullscreen
+                    pg.display.quit()
+                    pg.display.init()
+                    self.screen = pg.display.set_mode((0, 0), pg.FULLSCREEN)
+                
+                elif event.key == pg.K_g and pg.key.get_mods() & pg.KMOD_ALT:
+                    #se apertar ALT + G (ia ficar ruim colocar W mas pode ser outra), a tela fica windowed
+                    pg.display.quit()
+                    pg.display.init()
+                    self.screen = pg.display.set_mode((settings.WIDTH, settings.HEIGHT), pg.RESIZABLE)
+                        
+            
+                
                 
     def show_start_screen(self):
         pass
@@ -92,6 +107,4 @@ while True:
     g.new()
     g.run()
     g.show_go_screen()
-    
-
         

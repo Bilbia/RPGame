@@ -14,7 +14,7 @@ class Map:
         self.height = self.tileheight * settings.TILESIZE
         
 class Camera:
-    def __init___(self, width, height):
+    def __init__(self, width, height):
         self.camera = pg.Rect(0, 0, width, height)
         self.width = width
         self.height = height    
