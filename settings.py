@@ -12,7 +12,7 @@ pg.init()
 screenInfo = pg.display.Info() #pega as infos da tela do computador para ajustar o width e o height 
 
 WIDTH = screenInfo.current_w  # 16 * 64 or 32 * 32 or 64 * 16
-HEIGHT = screenInfo.current_h  # 16 * 48 or 32 * 24 or 64 * 12
+HEIGHT = screenInfo.current_h - 28  # 16 * 48 or 32 * 24 or 64 * 12
 FPS = 60
 TITLE = " Teste de movimento "
 BGCOLOR = DARKGREY

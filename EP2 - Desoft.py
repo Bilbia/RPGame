@@ -4,6 +4,7 @@ import sys
 import settings  
 import sprites 
 import tilemap
+import os
 from os import path
 
 #Primeiro passo: definir a malha por onde o pernosagem se movimentará
@@ -16,6 +17,7 @@ class Game: # o que vai aparecer na tela do jogo
     def __init__(self): #--> __init__ : construtor d elementos do jogo
         pg.init()
         self.screen = pg.display.set_mode((settings.WIDTH, settings.HEIGHT),pg.RESIZABLE) #escolhendo largura e altura da malha quadriculada
+        os.environ['SDL_VIDEO_CENTERED'] = '1' #centraliza a janela do jogo na tela do computador
         pg.display.set_caption(settings.TITLE) 
         self.clock = pg.time.Clock()
         self.load_data()
