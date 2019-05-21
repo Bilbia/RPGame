@@ -72,7 +72,7 @@ class Wall(pg.sprite.Sprite):
         self.rect.y = y * settings.TILESIZE
         
         
-class Items (pg.sprite.Sprite):
+class Item (pg.sprite.Sprite):
     def __init__(self,game, pos, type):
         self.groups = game.all_sprites, game.items
         pg.sprite.Sprite.__init__(self, self.groups)

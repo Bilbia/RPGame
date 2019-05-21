@@ -27,16 +27,22 @@ class Game: # o que vai aparecer na tela do jogo
         img_folder = path.join(game_folder, "Sprites")
         self.map = tilemap.Map(path.join(game_folder, 'map2.txt'))
         self.player_img = pg.image.load(path.join(img_folder, settings.PLAYER_IMG)).convert_alpha()  #imagem do player
+        self.bau_img = pg.image.load(path.join(img_folder, settings.ITEM_IMAGES['bau'])).convert_alpha()
+        self.bauopen_img = pg.image.load(path.join(img_folder, settings.ITEM_IMAGES['bau_fechado'])).convert_alpha()
         
     def new(self):
         self.all_sprites = pg.sprite.Group() 
         self.walls = pg.sprite.Group()
+        self.items = pg.sprite.Group()
+
         for row, tiles in enumerate(self.map.data):
             for col, tile in enumerate(tiles):
                 if tile == '1':
                     sprites.Wall(self, col, row)
                 if tile == 'P':
                     self.player = sprites.Player(self, col, row)
+                if tile == 'B':
+                    sprites.Item(self, col, row) = settings.ITEM_IMAGES['bau.png']
         self.camera = tilemap.Camera(self.map.width, self.map.height)
            
     def run(self):
@@ -53,8 +59,13 @@ class Game: # o que vai aparecer na tela do jogo
         
     def update(self):
         self.all_sprites.update() #atualizar a cada loop feito
-        self.camera.update(self.player)       
+        self.camera.update(self.player)
         
+        hits = pg.sprite.spritecollide(self.player, self.items, False)
+        for hit in hits: #se o player bater no objeto bau e apertar espaço, abrirá outra imagem com o baí aberto.
+            if hit.type == 'B' and type == pg.K_SPACE:
+                sprites.Item(self, col, row) = settings.ITEM_IMAGES['bau_fechado.png']               
+
     def draw_grid(self):
         for x in range(0, settings.WIDTH, settings.TILESIZE):
             pg.draw.line(self.screen, settings.RED, (x, 0), (x, settings.HEIGHT)) # DESENHANDO AS LINHAS HORIZONTAIS

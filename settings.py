@@ -18,7 +18,7 @@ TITLE = " Teste de movimento "
 BGCOLOR = DARKGREY
 
 #ainda a decidir as dimensões, ent vou deixar o que está no tutorial
-TILESIZE = 64
+TILESIZE = 32
 GRIDWIDTH = WIDTH / TILESIZE
 GRIDHEIGHT = HEIGHT / TILESIZE
 
@@ -26,4 +26,10 @@ GRIDHEIGHT = HEIGHT / TILESIZE
 
 PLAYER_SPEED = 300
 PLAYER_IMG = 'raposa pequena.png'   #imagem do player
-BAU_FECHADO_IMG = 'bau.png' #IMAGEM DO BAU FECHADO
+
+ITEM_IMAGES = {
+        'bau': 'bau.png',
+        'bau_fechado': 'bau_fechado.png'
+        }
+
+
