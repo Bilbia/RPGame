@@ -27,23 +27,30 @@ class Game: # o que vai aparecer na tela do jogo
         img_folder = path.join(game_folder, "Sprites")
         self.map = tilemap.Map(path.join(game_folder, 'map2.txt'))
         self.player_img = pg.image.load(path.join(img_folder, settings.PLAYER_IMG)).convert_alpha()  #imagem do player
-        self.bau_img = pg.image.load(path.join(img_folder, settings.ITEM_IMAGES['bau'])).convert_alpha()
-        self.bauopen_img = pg.image.load(path.join(img_folder, settings.ITEM_IMAGES['bau_fechado'])).convert_alpha()
+        
+        
+        self.items_img = {
+            settings.ITEM_BAU: pg.image.load(path.join(img_folder, settings.ITEM_IMAGES[settings.ITEM_BAU])).convert_alpha(),
+            settings.ITEM_BAU_ABERTO: pg.image.load(path.join(img_folder, settings.ITEM_IMAGES[settings.ITEM_BAU_ABERTO])).convert_alpha()
+        }
         
     def new(self):
-        self.all_sprites = pg.sprite.Group() 
-        self.walls = pg.sprite.Group()
-        self.items = pg.sprite.Group()
-
-        for row, tiles in enumerate(self.map.data):
-            for col, tile in enumerate(tiles):
-                if tile == '1':
-                    sprites.Wall(self, col, row)
-                if tile == 'P':
-                    self.player = sprites.Player(self, col, row)
-                if tile == 'B':
-                    sprites.Item(self, col, row) = settings.ITEM_IMAGES['bau.png']
-        self.camera = tilemap.Camera(self.map.width, self.map.height)
+            self.all_sprites = pg.sprite.Group() 
+            self.walls = pg.sprite.Group()
+            self.items = pg.sprite.Group()
+    
+            for row, tiles in enumerate(self.map.data):
+                for col, tile in enumerate(tiles):
+                    if tile == '1':
+                        self.walls.add(sprites.Wall(self, col, row))
+                    if tile == 'P':
+                        self.player = sprites.Player(self, col, row)
+                        self.all_sprites.add(self.player)
+                    if tile == 'B':
+                        item = sprites.Item(self,col,row,settings.ITEM_BAU)
+                        self.items.add(item)
+                        self.all_sprites.add(item)
+            self.camera = tilemap.Camera(self.map.width, self.map.height)
            
     def run(self):
         self.playing = True
@@ -63,8 +70,9 @@ class Game: # o que vai aparecer na tela do jogo
         
         hits = pg.sprite.spritecollide(self.player, self.items, False)
         for hit in hits: #se o player bater no objeto bau e apertar espaço, abrirá outra imagem com o baí aberto.
-            if hit.type == 'B' and type == pg.K_SPACE:
-                sprites.Item(self, col, row) = settings.ITEM_IMAGES['bau_fechado.png']               
+#            for event in pg.event.get(): # --> chamar função para sair do jogo
+                if hit.type == settings.ITEM_IMAGES['raposa pequena.png'] and hit.type == pg.K_SPACE:
+                    'B' == settings.ITEM_IMAGES['raposa pequena.png']               
 
     def draw_grid(self):
         for x in range(0, settings.WIDTH, settings.TILESIZE):
