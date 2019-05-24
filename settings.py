@@ -27,9 +27,13 @@ GRIDHEIGHT = HEIGHT / TILESIZE
 PLAYER_SPEED = 300
 PLAYER_IMG = 'raposa pequena.png'   #imagem do player
 
+ITEM_BAU = 'bau'
+ITEM_BAU_ABERTO = 'bau_aberto'
+
 ITEM_IMAGES = {
-        'bau': 'bau.png',
-        'bau_fechado': 'bau_fechado.png'
-        }
+        ITEM_BAU: 'raposa pequena.png', #'bau.png',
+        ITEM_BAU_ABERTO: 'raposa pequena.png' # 'bau_aberto.png'
+}
+
 
 

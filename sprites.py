@@ -73,15 +73,22 @@ class Wall(pg.sprite.Sprite):
         
         
 class Item (pg.sprite.Sprite):
-    def __init__(self,game, pos, type):
+    def __init__(self,game, x,y, t):
         self.groups = game.all_sprites, game.items
         pg.sprite.Sprite.__init__(self, self.groups)
+        
         self.game = game
-        self.image = game.item_images[type]
+        self.image = game.items_img[t]
         self.rect = self.image.get_rect()
-        self.type = type
-        self.rect.center = pos
-        self.pos = pos
+        self.type = t
+        self.rect.x = x * settings.TILESIZE
+        self.rect.y = y * settings.TILESIZE
+        
+    def abrir(self):
+        if self.type == settings.ITEM_BAU:
+            print("mudou")
+            self.image = self.game.items_img[settings.ITEM_BAU_ABERTO]
+            
         
         
         
