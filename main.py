@@ -1,4 +1,4 @@
-
+5
 import pygame as pg
 import sys
 import settings  
@@ -25,7 +25,11 @@ class Game: # o que vai aparecer na tela do jogo
     def load_data(self):
         game_folder = path.dirname(__file__)
         img_folder = path.join(game_folder, "Sprites")
-        self.map = tilemap.Map(path.join(game_folder, 'map2.txt'))
+        map_folder = path.join(game_folder, "Maps")
+        self.map = tilemap.TiledMap(path.join(map_folder, 'entrada.tmx'))
+        self.map_img = self.map.make_map()
+#        self.map_img = pg.transform.scale(self.map_img,(4*settings.WIDTH,4*settings.HEIGHT))
+        self.map_rect = self.map_img.get_rect()
         self.player_img = pg.image.load(path.join(img_folder, settings.PLAYER_IMG)).convert_alpha()  #imagem do player
         
         
@@ -39,18 +43,25 @@ class Game: # o que vai aparecer na tela do jogo
             self.walls = pg.sprite.Group()
             self.items = pg.sprite.Group()
     
-            for row, tiles in enumerate(self.map.data):
-                for col, tile in enumerate(tiles):
-                    if tile == '1':
-                        self.walls.add(sprites.Wall(self, col, row))
-                    if tile == 'P':
-                        self.player = sprites.Player(self, col, row)
-                        self.all_sprites.add(self.player)
-                    if tile == 'B':
-                        item = sprites.Item(self,col,row,settings.ITEM_BAU)
-                        self.items.add(item)
-                        self.all_sprites.add(item)
+#            for row, tiles in enumerate(self.map.data):
+#                for col, tile in enumerate(tiles):
+#                    if tile == '1':
+#                        self.walls.add(sprites.Wall(self, col, row))
+#                    if tile == 'P':
+#                        self.player = sprites.Player(self, col, row)
+#                        self.all_sprites.add(self.player)
+#                    if tile == 'B':
+#                        item = sprites.Item(self,col,row,settings.ITEM_BAU)
+#                        self.items.add(item)
+#                        self.all_sprites.add(item)
+            
+            for tile_object in self.map.tmxdata.objects:
+                if tile_object.name == 'player':
+                    self.player = sprites.Player(self, 4*tile_object.x, 4*tile_object.y)
+                if tile_object.name == 'wall':
+                    sprites.Obstacle(self, 4*tile_object.x, 4*tile_object.y, 4*tile_object.width, 4*tile_object.height)
             self.camera = tilemap.Camera(self.map.width, self.map.height)
+            self.draw_debug = False
            
     def run(self):
         self.playing = True
@@ -83,10 +94,16 @@ class Game: # o que vai aparecer na tela do jogo
         
     def draw (self):
         # detalhe só pra n esquecer pq sou monga:  sprites são "imagens" 2d, parte de um gráfico maior, que seria a cena.
-        self.screen.fill(settings.BGCOLOR)
-        self.draw_grid() #GRADEE
+        #self.screen.fill(settings.BGCOLOR)
+        self.screen.blit(self.map_img, self.camera.apply_rect(self.map_rect))
+#        self.draw_grid() #GRADEE
         for sprite in self.all_sprites:
             self.screen.blit(sprite.image, self.camera.apply(sprite))
+            if self.draw_debug:
+                pg.draw.rect(self.screen, settings.YELLOW, self.camera.apply_rect(sprite.rect),1)
+        if self.draw_debug:
+            for wall in self.walls:
+                pg.draw.rect(self.screen, settings.YELLOW, self.camera.apply_rect(wall.rect),1)
         pg.display.flip()
         
     def events(self):
@@ -110,6 +127,9 @@ class Game: # o que vai aparecer na tela do jogo
                     pg.display.quit()
                     pg.display.init()
                     self.screen = pg.display.set_mode((settings.WIDTH, settings.HEIGHT), pg.RESIZABLE)
+                    
+                if event.key == pg.K_h:
+                    self.draw_debug = not self.draw_debug
                         
             
                 

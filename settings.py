@@ -18,11 +18,11 @@ TITLE = " Teste de movimento "
 BGCOLOR = DARKGREY
 
 #ainda a decidir as dimensões, ent vou deixar o que está no tutorial
-TILESIZE = 32
+TILESIZE = 64
 GRIDWIDTH = WIDTH / TILESIZE
 GRIDHEIGHT = HEIGHT / TILESIZE
 
-#Player Settings #Yama
+#Player Settings 
 
 PLAYER_SPEED = 300
 PLAYER_IMG = 'raposa pequena.png'   #imagem do player
@@ -31,7 +31,7 @@ ITEM_BAU = 'bau'
 ITEM_BAU_ABERTO = 'bau_aberto'
 
 ITEM_IMAGES = {
-        ITEM_BAU: 'raposa pequena.png', #'bau.png',
+        ITEM_BAU: 'bau.png', #'bau.png',
         ITEM_BAU_ABERTO: 'raposa pequena.png' # 'bau_aberto.png'
 }
 

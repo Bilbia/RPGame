@@ -10,18 +10,26 @@ class Player(pg.sprite.Sprite):
         self.game = game
         self.image = game.player_img    #aplica imagem do player
         self.image = pg.transform.scale(self.image, (64, 112)) #o personagem eh da escala 4x7, entao so podemos fazer multiplos desses para n distorcer a imagem
-        self.rect = self.image.get_rect()
+        self.image_right = game.player_img
+        self.image_left = pg.transform.flip(game.player_img, True, False)
+        self.image_right = pg.transform.scale(self.image_right, (64,112))
+        self.image_left = pg.transform.scale(self.image_left, (64,112)) 
+        self.rect = self.image_right.get_rect()
+        self.rect = self.image_left.get_rect()
+        self.rect.center= (x,y)
         self.vel = vec(0,0)
-        self.pos = vec(x,y) * settings.TILESIZE
+        self.pos = vec(x,y) 
     
-    def get_keys(self): #Yama
+    def get_keys(self):
         self.vel = vec(0,0)
         self.vx, self.vy = 0, 0
         keys = pg.key.get_pressed()
         if keys[pg.K_LEFT] or keys[pg.K_a]:
             self.vel.x = -settings.PLAYER_SPEED     
+            self.image = self.image_left
         if keys[pg.K_RIGHT] or keys[pg.K_d]:
-            self.vel.x = settings.PLAYER_SPEED            
+            self.vel.x = settings.PLAYER_SPEED      
+            self.image = self.image_right
         if keys[pg.K_UP] or keys[pg.K_w]:
             self.vel.y = -settings.PLAYER_SPEED            
         if keys[pg.K_DOWN] or keys[pg.K_s]:
@@ -29,7 +37,7 @@ class Player(pg.sprite.Sprite):
         if self.vel.x != 0 and self.vel.y != 0:
             self.vel *= 0.7071
         
-    def colisao_paredes(self, dir): #Yama
+    def colisao_paredes(self, dir):
         if dir == 'x':
             hits = pg.sprite.spritecollide(self, self.game.walls, False)
             if hits:
@@ -70,6 +78,17 @@ class Wall(pg.sprite.Sprite):
         self.y = y
         self.rect.x = x * settings.TILESIZE
         self.rect.y = y * settings.TILESIZE
+        
+class Obstacle(pg.sprite.Sprite):
+    def __init__(self,game,x,y,w,h):
+        self.groups = game.walls
+        pg.sprite.Sprite.__init__(self,self.groups)
+        self.game = game
+        self.rect = pg.Rect(x, y, w, h)
+        self.x = x
+        self.y = y
+        self.rect.x = x 
+        self.rect.y = y 
         
         
 class Item (pg.sprite.Sprite):
