@@ -107,12 +107,13 @@ class Item (pg.sprite.Sprite):
 #        self.type = t
 #        self.rect.x = x * settings.TILESIZE
 #        self.rect.y = y * settings.TILESIZE
+
         
     def abrir(self):
-        if self.type == settings.ITEM_BAU:
-            print("mudou")
-            self.image = self.game.items_img[settings.ITEM_BAU_ABERTO]
-            
+        if self.type in ['chest']:
+            blocks_hit_list = pg.sprite.spritecollide(Player, self.image, False)
+            for block in blocks_hit_list:
+                self.image = self.game.items_img[settings.ITEM_IMAGES['bau aberto']]
         
         
         

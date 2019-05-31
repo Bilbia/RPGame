@@ -1,4 +1,5 @@
 import pygame as pg
+vec = pg.math.Vector2
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -33,7 +34,7 @@ INTRO_IMG = 'start.jpg'
 #ITEM_BAU_ABERTO = 'bau_aberto'
 
 ITEM_IMAGES = {
-        'bau': 'chest_close.png', #'bau.png',
+        'chest': 'chest_close.png', #'bau.png',
         'bau aberto': 'chest_open.png' # 'bau_aberto.png'
 }
 

@@ -60,10 +60,15 @@ class Game: # o que vai aparecer na tela do jogo
 #                        self.all_sprites.add(item)
             
             for tile_object in self.map.tmxdata.objects:
-                obj_center = vec(4*tile_object.x + 4*tile_object.width/2, 4*tile_object.y + 4*tile_object.height / 2)
+                obj_center = settings.vec(4*tile_object.x + 4*tile_object.width/2, 4*tile_object.y + 4*tile_object.height / 2)
+#                obj_width = 4*tile_object.width
+#                obj_height = 4*tile_object
                 if tile_object.name == 'player':
-                    self.player = sprites.Player(self, 4*tile_object.x, 4*tile_object.y)
+                    self.player = sprites.Player(self, obj_center.x, obj_center.y)
                 if tile_object.name == 'wall':
+                    sprites.Obstacle(self, 4*tile_object.x, 4*tile_object.y, 4*tile_object.width, 4*tile_object.height)
+                if tile_object.name in ['chest']:
+                    sprites.Item(self,obj_center,tile_object.name)
                     sprites.Obstacle(self, 4*tile_object.x, 4*tile_object.y, 4*tile_object.width, 4*tile_object.height)
             self.camera = tilemap.Camera(self.map.width, self.map.height)
             self.draw_debug = False
@@ -87,8 +92,8 @@ class Game: # o que vai aparecer na tela do jogo
         hits = pg.sprite.spritecollide(self.player, self.items, False)
         for hit in hits: #se o player bater no objeto bau e apertar espaço, abrirá outra imagem com o baí aberto.
 #            for event in pg.event.get(): # --> chamar função para sair do jogo
-                if hit.type == settings.ITEM_IMAGES['raposa pequena.png'] and hit.type == pg.K_SPACE:
-                    'B' == settings.ITEM_IMAGES['raposa pequena.png']               
+                if hit.type == settings.ITEM_IMAGES['chest'] and hit.type == pg.K_SPACE:
+                    settings.ITEM_IMAGES['chest'] = settings.ITEM_IMAGES['bau aberto']              
 
     def draw_grid(self):
         for x in range(0, settings.WIDTH, settings.TILESIZE):
@@ -135,6 +140,12 @@ class Game: # o que vai aparecer na tela do jogo
                     
                 if event.key == pg.K_h:
                     self.draw_debug = not self.draw_debug
+                
+#                if event.key == pg.K_SPACE:
+#                    for tile_object in self.map.tmxdata.objects:
+#                        if tile_object.name in ['chest']:
+#                            if tile_object.colliderect(rect):
+#                                if 
                         
                     
 #    def game_intro(self):
@@ -148,6 +159,7 @@ class Game: # o que vai aparecer na tela do jogo
 #                if event.key == pg.K_SPACE:
 #                    pass
             
+        
                 
                 
     def show_start_screen(self):
