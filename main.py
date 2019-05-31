@@ -28,15 +28,19 @@ class Game: # o que vai aparecer na tela do jogo
         map_folder = path.join(game_folder, "Maps")
         self.map = tilemap.TiledMap(path.join(map_folder, 'entrada.tmx'))
         self.map_img = self.map.make_map()
+        self.intro_img = pg.image.load(path.join(img_folder, settings.INTRO_IMG)).convert_alpha()
 #        self.map_img = pg.transform.scale(self.map_img,(4*settings.WIDTH,4*settings.HEIGHT))
         self.map_rect = self.map_img.get_rect()
         self.player_img = pg.image.load(path.join(img_folder, settings.PLAYER_IMG)).convert_alpha()  #imagem do player
+        self.item_images = {}
+        for item in settings.ITEM_IMAGES:
+            self.item_images[item] = pg.image.load(path.join(img_folder, settings.ITEM_IMAGES[item])).convert_alpha()
         
         
-        self.items_img = {
-            settings.ITEM_BAU: pg.image.load(path.join(img_folder, settings.ITEM_IMAGES[settings.ITEM_BAU])).convert_alpha(),
-            settings.ITEM_BAU_ABERTO: pg.image.load(path.join(img_folder, settings.ITEM_IMAGES[settings.ITEM_BAU_ABERTO])).convert_alpha()
-        }
+#        self.items_img = {
+#            settings.ITEM_BAU: pg.image.load(path.join(img_folder, settings.ITEM_IMAGES[settings.ITEM_BAU])).convert_alpha(),
+#            settings.ITEM_BAU_ABERTO: pg.image.load(path.join(img_folder, settings.ITEM_IMAGES[settings.ITEM_BAU_ABERTO])).convert_alpha()
+#        }
         
     def new(self):
             self.all_sprites = pg.sprite.Group() 
@@ -56,6 +60,7 @@ class Game: # o que vai aparecer na tela do jogo
 #                        self.all_sprites.add(item)
             
             for tile_object in self.map.tmxdata.objects:
+                obj_center = vec(4*tile_object.x + 4*tile_object.width/2, 4*tile_object.y + 4*tile_object.height / 2)
                 if tile_object.name == 'player':
                     self.player = sprites.Player(self, 4*tile_object.x, 4*tile_object.y)
                 if tile_object.name == 'wall':
@@ -131,6 +136,17 @@ class Game: # o que vai aparecer na tela do jogo
                 if event.key == pg.K_h:
                     self.draw_debug = not self.draw_debug
                         
+                    
+#    def game_intro(self):
+#        self.screen.blit(self.intro_img, tilemap.Camera.apply_rect(self.map_rect))
+#        for event in pg.event.get(): # --> chamar função para sair do jogo
+#            if event.type == pg.QUIT:
+#                self.quit()
+#            if event.type == pg.KEYDOWN:
+#                if event.key == pg.K_ESCAPE:
+#                    self.quit()
+#                if event.key == pg.K_SPACE:
+#                    pass
             
                 
                 
@@ -147,6 +163,7 @@ g = Game()
 g.show_start_screen()
 
 while True:
+#    g.game_intro()
     g.new()
     g.run()
     g.show_go_screen()
