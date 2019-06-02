@@ -101,12 +101,6 @@ class Item (pg.sprite.Sprite):
         self.type = type
         self.rect.center = pos
         
-#        self.game = game
-#        self.image = game.items_img[t]
-#        self.rect = self.image.get_rect()
-#        self.type = t
-#        self.rect.x = x * settings.TILESIZE
-#        self.rect.y = y * settings.TILESIZE
 
         
     def abrir(self):

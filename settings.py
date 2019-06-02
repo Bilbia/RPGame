@@ -30,13 +30,42 @@ PLAYER_IMG = 'raposa pequena.png'   #imagem do player
 
 INTRO_IMG = 'start.jpg'
 
+# Layers
+WALL_LAYER = 1
+PLAYER_LAYER = 2
+BULLET_LAYER = 3
+MOB_LAYER = 2
+EFFECTS_LAYER = 4
+ITEMS_LAYER = 1
+
+
 #ITEM_BAU = 'bau'
 #ITEM_BAU_ABERTO = 'bau_aberto'
 
 ITEM_IMAGES = {
         'chest': 'chest_close.png', #'bau.png',
         'bau aberto': 'chest_open.png' # 'bau_aberto.png'
+        
 }
+
+ITEMS_MAP = {
+        'armor': {
+                'img': 'casaco.png',
+                'defense': 40,
+                'description': "quentinho, te protege do frio..."
+        },
+                
+        'weapon': {
+                'img': 'prototipo.png',
+                'attack': 50,
+                'description': "quebrou e não serve para mais nada... Essas pontas de parafuso devem servir para matar alguém"
+        },
+        
+        'key': "Pode servir para desbloquear uma área importante!!"
+                
+}
+
+INVENTORY = {}
 
 
 

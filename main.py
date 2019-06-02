@@ -35,7 +35,7 @@ class Game: # o que vai aparecer na tela do jogo
         self.item_images = {}
         for item in settings.ITEM_IMAGES:
             self.item_images[item] = pg.image.load(path.join(img_folder, settings.ITEM_IMAGES[item])).convert_alpha()
-        
+                    
         
 #        self.items_img = {
 #            settings.ITEM_BAU: pg.image.load(path.join(img_folder, settings.ITEM_IMAGES[settings.ITEM_BAU])).convert_alpha(),
@@ -93,6 +93,7 @@ class Game: # o que vai aparecer na tela do jogo
         for hit in hits: #se o player bater no objeto bau e apertar espaço, abrirá outra imagem com o baí aberto.
 #            for event in pg.event.get(): # --> chamar função para sair do jogo
                 if hit.type == settings.ITEM_IMAGES['chest'] and hit.type == pg.K_SPACE:
+                    #substituir img
                     settings.ITEM_IMAGES['chest'] = settings.ITEM_IMAGES['bau aberto']              
 
     def draw_grid(self):
@@ -103,7 +104,7 @@ class Game: # o que vai aparecer na tela do jogo
             
         
     def draw (self):
-        # detalhe só pra n esquecer pq sou monga:  sprites são "imagens" 2d, parte de um gráfico maior, que seria a cena.
+        # detalhe:  sprites são "imagens" 2d, parte de um gráfico maior, que seria a cena.
         #self.screen.fill(settings.BGCOLOR)
         self.screen.blit(self.map_img, self.camera.apply_rect(self.map_rect))
 #        self.draw_grid() #GRADEE
@@ -146,7 +147,7 @@ class Game: # o que vai aparecer na tela do jogo
 #                        if tile_object.name in ['chest']:
 #                            if tile_object.colliderect(rect):
 #                                if 
-                        
+                                        
                     
 #    def game_intro(self):
 #        self.screen.blit(self.intro_img, tilemap.Camera.apply_rect(self.map_rect))
