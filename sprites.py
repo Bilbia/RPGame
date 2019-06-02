@@ -1,6 +1,7 @@
 
 import pygame as pg
 import settings
+import main
 vec = pg.math.Vector2   #transformando o player em um vetor
 
 class Player(pg.sprite.Sprite):   
@@ -103,29 +104,35 @@ class Item (pg.sprite.Sprite):
         
 
         
-    def abrir(self):
+    def collide(self): #colidir com itens do jogo
         if self.type in ['chest']:
             blocks_hit_list = pg.sprite.spritecollide(Player, self.image, False)
             for block in blocks_hit_list:
                 self.image = self.game.items_img[settings.ITEM_IMAGES['bau aberto']]
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+        if self.type in ['armor'] or self.type in ['weapon'] or self.type in ['key']: #adicionar possíveis itens no inventário
+            blocks_hit_list = pg.sprite.spritecollide(Player, self.image, False) 
+            if main.event.type == pg.KEYDOWN:
+                if self.type in ['armor']:
+                    settings.INVENTORY['armor'] = settings.ITEMS_MAP['armor']
+                if self.type in ['weapon']:
+                    settings.INVENTORY['weapon'] = settings.ITEMS_MAP['weapon']
+                if self.type in ['key']:
+                    settings.INVENTORY['key'] = settings.ITEMS_MAP['key']
+                    
+                    
+                    
+                    
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
