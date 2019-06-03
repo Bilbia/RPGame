@@ -53,7 +53,10 @@ ITEM_IMAGES = {
         'chest': 'chest_close.png', 
         'bau aberto': 'chest_open.png', 
         'door' : 'porta trancada.png',
-        'porta aberta': 'porta aberta.png'
+        'porta aberta': 'porta aberta.png',
+        'key': 'chave.png',
+        'casaco': 'casaco.png',
+#        'guarda_chuva': 'guarda_chuva.png'
         
 }
 
@@ -74,11 +77,14 @@ ITEMS_MAP = {
                 
 }
 
+INVENTORY = [
+        "chest_key"
+        ]
 
-#Inventário do Player
-INVENTORY = {
-        'chest_key' : 'abre o bau'
-        }
+
+
+
+
 
 
 

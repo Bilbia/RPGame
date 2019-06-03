@@ -131,9 +131,7 @@ class Item (pg.sprite.Sprite):
         
 
         
-                
-                
-    
+  
     def collide(self): #colidir com itens do jogo
         if self.type in ['chest']:
             blocks_hit_list = pg.sprite.spritecollide(Player, self.image, False)

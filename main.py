@@ -1,4 +1,4 @@
-5
+
 import pygame as pg
 import sys
 import settings  
@@ -60,6 +60,19 @@ class Game: # o que vai aparecer na tela do jogo
                     sprites.Item(self,obj_center,tile_object.name)
                     self.porta = self.rect = sprites.Obstacle(self, 4*tile_object.x, 4*tile_object.y, 4*tile_object.width, 4*tile_object.height)
 #                    return porta
+                if tile_object.name in ['key']:
+                    sprites.Item(self,obj_center,tile_object.name)
+                    self.key = sprites.Obstacle(self, 4*tile_object.x, 4*tile_object.y, 4*tile_object.width, 4*tile_object.height)
+
+                if tile_object.name in ['casaco']:
+                    sprites.Item(self,obj_center,tile_object.name)
+                    sprites.Obstacle(self, 4*tile_object.x, 4*tile_object.y, 4*tile_object.width, 4*tile_object.height)
+#                    
+#                if tile_object.name in ['guarda_chuva']:
+#                    sprites.Item(self,obj_center,tile_object.name)
+#                    sprites.Obstacle(self, 4*tile_object.x, 4*tile_object.y, 4*tile_object.width, 4*tile_object.height)
+                    
+                
             self.camera = tilemap.Camera(self.map.width, self.map.height)
             self.draw_debug = False
            
@@ -92,7 +105,7 @@ class Game: # o que vai aparecer na tela do jogo
                             obj_center = settings.vec(4*tile_object.x + 4*tile_object.width/2, 4*tile_object.y + 4*tile_object.height / 2)
                             if tile_object.name in ['chest']:
                                 sprites.Item(self,obj_center,'bau aberto') #cria a sprite do bau fechado    
-                        settings.INVENTORY['door_key'] = 'abre uma sala especial' #adiciona chave da porta
+                        settings.INVENTORY.append("door_key")  #adiciona chave da porta
                 #mecanismo da porta
                 if hit.type == 'door':
                     if 'door_key' in settings.INVENTORY: #checa se a chave da porta tá no inventário
@@ -100,8 +113,21 @@ class Game: # o que vai aparecer na tela do jogo
                         for tile_object in self.map.tmxdata.objects:
                             obj_center = settings.vec(4*tile_object.x + 4*tile_object.width/2, 4*tile_object.y + 4*tile_object.height / 2)
                             if tile_object.name in ['door']:
-                                sprites.Item(self,obj_center,'porta aberta') 
-            
+                                sprites.Item(self,obj_center,'porta aberta')
+                                
+                if hit.type == 'key':
+                   hit.kill()
+                   self.key.kill()
+                   settings.INVENTORY.append('key')
+                   
+                if hit.type == 'casaco':
+                   hit.kill()
+                   self.key.kill()
+                   settings.INVENTORY.append('casaco')
+#                    
+#                if hit.type == 'guarda_chuva':
+#                    hit.kill()
+#                    settings.INVENTORY.append('guarda_chuva')
 
     def draw_grid(self):
         for x in range(0, settings.WIDTH, settings.TILESIZE):
@@ -131,6 +157,23 @@ class Game: # o que vai aparecer na tela do jogo
             if event.type == pg.QUIT:
                 self.quit()
             if event.type == pg.KEYDOWN:
+                if event.key == pg.K_I: #aparecer tela com inventário
+                    ITEMS_MAP = True
+                    while ITEMS_MAP:
+                        self.clock.tick(settings.FPS)
+                        background_colour = (255,255,255)
+                        (width, height) = (300, 200)
+                        screen = pg.display.set_mode((width, height))
+                        pg.display.set_caption('Tutorial 1')
+                        screen.fill(background_colour)
+                        pg.display.flip()
+                        running = True
+                        while running:
+                          for event in pg.event.get():
+                            if event.type == pg.QUIT:
+                              running = False
+                        
+                        
                 if event.key == pg.K_ESCAPE:
                     self.quit()
                 
