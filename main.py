@@ -7,6 +7,7 @@ import tilemap
 import os
 from os import path
 
+
 #Primeiro passo: definir a malha por onde o pernosagem se movimentará
 #o que é um "set" --> coleção de itens desordenados, sendo cada um deles único e imutável, n podendo copiá-los
 
@@ -35,29 +36,12 @@ class Game: # o que vai aparecer na tela do jogo
         self.item_images = {}
         for item in settings.ITEM_IMAGES:
             self.item_images[item] = pg.image.load(path.join(img_folder, settings.ITEM_IMAGES[item])).convert_alpha()
-                    
-        
-#        self.items_img = {
-#            settings.ITEM_BAU: pg.image.load(path.join(img_folder, settings.ITEM_IMAGES[settings.ITEM_BAU])).convert_alpha(),
-#            settings.ITEM_BAU_ABERTO: pg.image.load(path.join(img_folder, settings.ITEM_IMAGES[settings.ITEM_BAU_ABERTO])).convert_alpha()
-#        }
+            
         
     def new(self):
             self.all_sprites = pg.sprite.Group() 
             self.walls = pg.sprite.Group()
             self.items = pg.sprite.Group()
-    
-#            for row, tiles in enumerate(self.map.data):
-#                for col, tile in enumerate(tiles):
-#                    if tile == '1':
-#                        self.walls.add(sprites.Wall(self, col, row))
-#                    if tile == 'P':
-#                        self.player = sprites.Player(self, col, row)
-#                        self.all_sprites.add(self.player)
-#                    if tile == 'B':
-#                        item = sprites.Item(self,col,row,settings.ITEM_BAU)
-#                        self.items.add(item)
-#                        self.all_sprites.add(item)
             
             for tile_object in self.map.tmxdata.objects:
                 obj_center = settings.vec(4*tile_object.x + 4*tile_object.width/2, 4*tile_object.y + 4*tile_object.height / 2)
@@ -67,7 +51,7 @@ class Game: # o que vai aparecer na tela do jogo
                     self.player = sprites.Player(self, obj_center.x, obj_center.y)
                 if tile_object.name == 'wall':
                     sprites.Obstacle(self, 4*tile_object.x, 4*tile_object.y, 4*tile_object.width, 4*tile_object.height)
-                if tile_object.name in ['chest']:
+                if tile_object.name in ['chest','door']:
                     sprites.Item(self,obj_center,tile_object.name)
                     sprites.Obstacle(self, 4*tile_object.x, 4*tile_object.y, 4*tile_object.width, 4*tile_object.height)
             self.camera = tilemap.Camera(self.map.width, self.map.height)
@@ -88,13 +72,27 @@ class Game: # o que vai aparecer na tela do jogo
     def update(self):
         self.all_sprites.update() #atualizar a cada loop feito
         self.camera.update(self.player)
-        
-        hits = pg.sprite.spritecollide(self.player, self.items, False)
-        for hit in hits: #se o player bater no objeto bau e apertar espaço, abrirá outra imagem com o baí aberto.
-#            for event in pg.event.get(): # --> chamar função para sair do jogo
-                if hit.type == settings.ITEM_IMAGES['chest'] and hit.type == pg.K_SPACE:
-                    #substituir img
-                    settings.ITEM_IMAGES['chest'] = settings.ITEM_IMAGES['bau aberto']              
+        keys = pg.key.get_pressed()
+        hits = pg.sprite.spritecollide(self.player, self.items, False) #checa colisão do player com o item
+        for hit in hits:
+            #mecanismo do bau
+            if keys[pg.K_SPACE]: #checa se a tecla espaço foi apertada
+                if hit.type == 'chest':
+                    if 'chest_key' in settings.INVENTORY: #checa se a chave do bau tá no inventário
+                        hit.kill() #deleta a sprite do bau
+                        for tile_object in self.map.tmxdata.objects:
+                            obj_center = settings.vec(4*tile_object.x + 4*tile_object.width/2, 4*tile_object.y + 4*tile_object.height / 2)
+                            if tile_object.name in ['chest']:
+                                sprites.Item(self,obj_center,'bau aberto') #cria a sprite do bau fechado    
+                        settings.INVENTORY['door_key'] = 'abre uma sala especial' #adiciona chave da porta
+                if hit.type == 'door':
+                    if 'door_key' in settings.INVENTORY: #checa se a chave da porta tá no inventário
+                        hit.kill()
+                        for tile_object in self.map.tmxdata.objects:
+                            obj_center = settings.vec(4*tile_object.x + 4*tile_object.width/2, 4*tile_object.y + 4*tile_object.height / 2)
+                            if tile_object.name in ['door']:
+                                sprites.Item(self,obj_center,'porta aberta') 
+            
 
     def draw_grid(self):
         for x in range(0, settings.WIDTH, settings.TILESIZE):
@@ -105,7 +103,8 @@ class Game: # o que vai aparecer na tela do jogo
         
     def draw (self):
         # detalhe:  sprites são "imagens" 2d, parte de um gráfico maior, que seria a cena.
-        #self.screen.fill(settings.BGCOLOR)
+        self.screen.fill(settings.BGCOLOR)
+        
         self.screen.blit(self.map_img, self.camera.apply_rect(self.map_rect))
 #        self.draw_grid() #GRADEE
         for sprite in self.all_sprites:
@@ -141,24 +140,6 @@ class Game: # o que vai aparecer na tela do jogo
                     
                 if event.key == pg.K_h:
                     self.draw_debug = not self.draw_debug
-                
-#                if event.key == pg.K_SPACE:
-#                    for tile_object in self.map.tmxdata.objects:
-#                        if tile_object.name in ['chest']:
-#                            if tile_object.colliderect(rect):
-#                                if 
-                                        
-                    
-#    def game_intro(self):
-#        self.screen.blit(self.intro_img, tilemap.Camera.apply_rect(self.map_rect))
-#        for event in pg.event.get(): # --> chamar função para sair do jogo
-#            if event.type == pg.QUIT:
-#                self.quit()
-#            if event.type == pg.KEYDOWN:
-#                if event.key == pg.K_ESCAPE:
-#                    self.quit()
-#                if event.key == pg.K_SPACE:
-#                    pass
             
         
                 

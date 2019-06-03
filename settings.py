@@ -39,12 +39,13 @@ EFFECTS_LAYER = 4
 ITEMS_LAYER = 1
 
 
-#ITEM_BAU = 'bau'
-#ITEM_BAU_ABERTO = 'bau_aberto'
+
 
 ITEM_IMAGES = {
-        'chest': 'chest_close.png', #'bau.png',
-        'bau aberto': 'chest_open.png' # 'bau_aberto.png'
+        'chest': 'chest_close.png', 
+        'bau aberto': 'chest_open.png', 
+        'door' : 'porta trancada.png',
+        'porta aberta': 'porta aberta.png'
         
 }
 
@@ -65,7 +66,9 @@ ITEMS_MAP = {
                 
 }
 
-INVENTORY = {}
+INVENTORY = {
+        'chest_key' : 'abre o bau'
+        }
 
 
 

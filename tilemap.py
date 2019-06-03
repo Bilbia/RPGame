@@ -50,8 +50,6 @@ class TiledMap:
         
         return temp_surface
 
-#th = main.Game.load_data.map.tmxdata.height
-#print(th)
 
 
 
