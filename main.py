@@ -36,12 +36,14 @@ class Game: # o que vai aparecer na tela do jogo
         self.item_images = {}
         for item in settings.ITEM_IMAGES:
             self.item_images[item] = pg.image.load(path.join(img_folder, settings.ITEM_IMAGES[item])).convert_alpha()
+        self.ninja_img = pg.image.load(path.join(img_folder, settings.NINJA_IMG)).convert_alpha()
             
         
     def new(self):
             self.all_sprites = pg.sprite.Group() 
             self.walls = pg.sprite.Group()
             self.items = pg.sprite.Group()
+            self.ninjas = pg.sprite.Group()
             
             for tile_object in self.map.tmxdata.objects:
                 obj_center = settings.vec(4*tile_object.x + 4*tile_object.width/2, 4*tile_object.y + 4*tile_object.height / 2)
@@ -50,7 +52,9 @@ class Game: # o que vai aparecer na tela do jogo
                 if tile_object.name == 'player':
                     self.player = sprites.Player(self, obj_center.x, obj_center.y)
                 if tile_object.name == 'wall':
-                    sprites.Obstacle(self, 4*tile_object.x, 4*tile_object.y, 4*tile_object.width, 4*tile_object.height)
+                        sprites.Obstacle(self, 4*tile_object.x, 4*tile_object.y, 4*tile_object.width, 4*tile_object.height)
+                if tile_object.name == 'ninja':
+                    sprites.Ninja(self, obj_center)
                 if tile_object.name in ['chest','door']:
                     sprites.Item(self,obj_center,tile_object.name)
                     sprites.Obstacle(self, 4*tile_object.x, 4*tile_object.y, 4*tile_object.width, 4*tile_object.height)
@@ -103,8 +107,8 @@ class Game: # o que vai aparecer na tela do jogo
         
     def draw (self):
         # detalhe:  sprites são "imagens" 2d, parte de um gráfico maior, que seria a cena.
+#        pg.display.set_caption("{:.2f}".format(self.clock.get_fps()))
         self.screen.fill(settings.BGCOLOR)
-        
         self.screen.blit(self.map_img, self.camera.apply_rect(self.map_rect))
 #        self.draw_grid() #GRADEE
         for sprite in self.all_sprites:

@@ -1,7 +1,6 @@
 
 import pygame as pg
 import settings
-import main
 vec = pg.math.Vector2   #transformando o player em um vetor
 
 class Player(pg.sprite.Sprite):   
@@ -66,6 +65,15 @@ class Player(pg.sprite.Sprite):
         self.rect.y = self.pos.y
         self.colisao_paredes('y')
         
+
+class Ninja(pg.sprite.Sprite):
+    def __init__(self,game,x,y):
+        self.groups = game.all_sprites, game.ninjas
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.image = game.ninja_img
+        self.rect = self.image.get_rect()
+        self.pos = vec(x,y) * settings.TILESIZE
+        
         
 class Wall(pg.sprite.Sprite):
     def __init__(self,game,x,y):
@@ -81,16 +89,15 @@ class Wall(pg.sprite.Sprite):
         self.rect.y = y * settings.TILESIZE
         
 class Obstacle(pg.sprite.Sprite):
-#    if obst == True:
-        def __init__(self,game,x,y,w,h):
-            self.groups = game.walls
-            pg.sprite.Sprite.__init__(self,self.groups)
-            self.game = game
-            self.rect = pg.Rect(x, y, w, h)
-            self.x = x
-            self.y = y
-            self.rect.x = x 
-            self.rect.y = y 
+    def __init__(self,game,x,y,w,h):
+        self.groups = game.walls
+        pg.sprite.Sprite.__init__(self,self.groups)
+        self.game = game
+        self.rect = pg.Rect(x, y, w, h)
+        self.x = x
+        self.y = y
+        self.rect.x = x 
+        self.rect.y = y 
         
         
 class Item (pg.sprite.Sprite):
@@ -105,20 +112,20 @@ class Item (pg.sprite.Sprite):
         
 
         
-    def collide(self): #colidir com itens do jogo
-        if self.type in ['chest']:
-            blocks_hit_list = pg.sprite.spritecollide(Player, self.image, False)
-            for block in blocks_hit_list:
-                self.image = self.game.items_img[settings.ITEM_IMAGES['bau aberto']]
-        if self.type in ['armor'] or self.type in ['weapon'] or self.type in ['key']: #adicionar possíveis itens no inventário
-            blocks_hit_list = pg.sprite.spritecollide(Player, self.image, False) 
-            if main.event.type == pg.KEYDOWN:
-                if self.type in ['armor']:
-                    settings.INVENTORY['armor'] = settings.ITEMS_MAP['armor']
-                if self.type in ['weapon']:
-                    settings.INVENTORY['weapon'] = settings.ITEMS_MAP['weapon']
-                if self.type in ['key']:
-                    settings.INVENTORY['key'] = settings.ITEMS_MAP['key']
+#    def collide(self): #colidir com itens do jogo
+#        if self.type in ['chest']:
+#            blocks_hit_list = pg.sprite.spritecollide(Player, self.image, False)
+#            for block in blocks_hit_list:
+#                self.image = self.game.items_img[settings.ITEM_IMAGES['bau aberto']]
+#        if self.type in ['armor'] or self.type in ['weapon'] or self.type in ['key']: #adicionar possíveis itens no inventário
+#            blocks_hit_list = pg.sprite.spritecollide(Player, self.image, False) 
+#            if main.event.type == pg.KEYDOWN:
+#                if self.type in ['armor']:
+#                    settings.INVENTORY['armor'] = settings.ITEMS_MAP['armor']
+#                if self.type in ['weapon']:
+#                    settings.INVENTORY['weapon'] = settings.ITEMS_MAP['weapon']
+#                if self.type in ['key']:
+#                    settings.INVENTORY['key'] = settings.ITEMS_MAP['key']
                     
                     
                     

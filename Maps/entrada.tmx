@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.4" orientation="orthogonal" renderorder="right-down" width="115" height="49" tilewidth="16" tileheight="16" infinite="0" nextlayerid="13" nextobjectid="87">
+<map version="1.2" tiledversion="1.2.4" orientation="orthogonal" renderorder="right-down" width="115" height="49" tilewidth="16" tileheight="16" infinite="0" nextlayerid="13" nextobjectid="88">
  <tileset firstgid="1" source="Roguelike-Pack.tsx"/>
  <tileset firstgid="1768" source="TopDown.tsx"/>
  <tileset firstgid="2308" source="Roguelike-Indoors.tsx"/>
@@ -235,5 +235,6 @@
   <object id="82" name="wall" x="20" y="20" width="8" height="12"/>
   <object id="84" name="chest" x="120" y="152" width="8" height="8"/>
   <object id="85" name="door" x="216" y="84" width="16" height="8"/>
+  <object id="87" name="ninja" x="200" y="136" width="8" height="8"/>
  </objectgroup>
 </map>
