@@ -47,17 +47,19 @@ class Game: # o que vai aparecer na tela do jogo
             
             for tile_object in self.map.tmxdata.objects:
                 obj_center = settings.vec(4*tile_object.x + 4*tile_object.width/2, 4*tile_object.y + 4*tile_object.height / 2)
-#                obj_width = 4*tile_object.width
-#                obj_height = 4*tile_object
                 if tile_object.name == 'player':
                     self.player = sprites.Player(self, obj_center.x, obj_center.y)
                 if tile_object.name == 'wall':
                         sprites.Obstacle(self, 4*tile_object.x, 4*tile_object.y, 4*tile_object.width, 4*tile_object.height)
                 if tile_object.name == 'ninja':
-                    sprites.Ninja(self, obj_center)
-                if tile_object.name in ['chest','door']:
+                    sprites.Ninja(self, obj_center.x, obj_center.y)
+                if tile_object.name in ['chest']:
                     sprites.Item(self,obj_center,tile_object.name)
                     sprites.Obstacle(self, 4*tile_object.x, 4*tile_object.y, 4*tile_object.width, 4*tile_object.height)
+                if tile_object.name == 'door':
+                    sprites.Item(self,obj_center,tile_object.name)
+                    self.porta = self.rect = sprites.Obstacle(self, 4*tile_object.x, 4*tile_object.y, 4*tile_object.width, 4*tile_object.height)
+#                    return porta
             self.camera = tilemap.Camera(self.map.width, self.map.height)
             self.draw_debug = False
            
@@ -78,6 +80,8 @@ class Game: # o que vai aparecer na tela do jogo
         self.camera.update(self.player)
         keys = pg.key.get_pressed()
         hits = pg.sprite.spritecollide(self.player, self.items, False) #checa colisão do player com o item
+        
+        #mecanismo de interagir com objetos
         for hit in hits:
             #mecanismo do bau
             if keys[pg.K_SPACE]: #checa se a tecla espaço foi apertada
@@ -89,9 +93,10 @@ class Game: # o que vai aparecer na tela do jogo
                             if tile_object.name in ['chest']:
                                 sprites.Item(self,obj_center,'bau aberto') #cria a sprite do bau fechado    
                         settings.INVENTORY['door_key'] = 'abre uma sala especial' #adiciona chave da porta
+                #mecanismo da porta
                 if hit.type == 'door':
                     if 'door_key' in settings.INVENTORY: #checa se a chave da porta tá no inventário
-                        hit.kill()
+                        self.porta.kill()
                         for tile_object in self.map.tmxdata.objects:
                             obj_center = settings.vec(4*tile_object.x + 4*tile_object.width/2, 4*tile_object.y + 4*tile_object.height / 2)
                             if tile_object.name in ['door']:

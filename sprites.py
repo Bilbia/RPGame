@@ -67,12 +67,31 @@ class Player(pg.sprite.Sprite):
         
 
 class Ninja(pg.sprite.Sprite):
-    def __init__(self,game,x,y):
+    def __init__(self, game, x, y):
         self.groups = game.all_sprites, game.ninjas
         pg.sprite.Sprite.__init__(self, self.groups)
-        self.image = game.ninja_img
+        self.game = game
+        self.image = game.player_img
         self.rect = self.image.get_rect()
-        self.pos = vec(x,y) * settings.TILESIZE
+        self.pos = vec(x, y) * settings.TILESIZE
+        self.vel = vec(0, 0)
+        self.acc = vec(0, 0)
+        self.rect.center = self.pos
+        self.rot = 0 
+        
+    def update(self):
+        self.rot = (self.game.player.pos - self.pos).angle_to(vec(1, 0))
+        self.image = pg.transform.rotate(self.game.ninja_img, self.rot)
+        self.rect = self.image.get_rect()
+        self.rect.center = self.pos
+        self.acc = vec(settings.NINJA_SPEED, 0).rotate(-self.rot)
+        self.acc += self.vel * -1
+        self.vel += self.acc * self.game.dt
+        self.pos += self.vel * self.game.dt + 0.5 *  self.acc * self.game.dt ** 2
+        self.rect.centerx = self.pos.x
+#        colisao_paredes(self, self.game.walls, 'x')
+        self.rect.centery = self.pos.y
+#        colisao_paredes(self, self.game.walls, 'y')
         
         
 class Wall(pg.sprite.Sprite):
@@ -113,20 +132,16 @@ class Item (pg.sprite.Sprite):
 
         
 #    def collide(self): #colidir com itens do jogo
-#        if self.type in ['chest']:
-#            blocks_hit_list = pg.sprite.spritecollide(Player, self.image, False)
-#            for block in blocks_hit_list:
-#                self.image = self.game.items_img[settings.ITEM_IMAGES['bau aberto']]
 #        if self.type in ['armor'] or self.type in ['weapon'] or self.type in ['key']: #adicionar possíveis itens no inventário
 #            blocks_hit_list = pg.sprite.spritecollide(Player, self.image, False) 
-#            if main.event.type == pg.KEYDOWN:
-#                if self.type in ['armor']:
-#                    settings.INVENTORY['armor'] = settings.ITEMS_MAP['armor']
-#                if self.type in ['weapon']:
-#                    settings.INVENTORY['weapon'] = settings.ITEMS_MAP['weapon']
-#                if self.type in ['key']:
-#                    settings.INVENTORY['key'] = settings.ITEMS_MAP['key']
-                    
+#            keys = pg.key.get_pressed()
+#            if self.type in ['armor']:
+#                settings.INVENTORY['armor'] = settings.ITEMS_MAP['armor']
+#            if self.type in ['weapon']:
+#                settings.INVENTORY['weapon'] = settings.ITEMS_MAP['weapon']
+#            if self.type in ['key']:
+#                settings.INVENTORY['key'] = settings.ITEMS_MAP['key']
+                
                     
                     
                     

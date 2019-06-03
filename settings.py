@@ -28,13 +28,14 @@ GRIDHEIGHT = HEIGHT / TILESIZE
 PLAYER_SPEED = 300
 PLAYER_IMG = 'raposa pequena.png'   #imagem do player
 
-
+    
 #Intro Image
 INTRO_IMG = 'start.jpg'
 
 
 #Ninja Settings
 NINJA_IMG = 'ninja 1.2.png'
+NINJA_SPEED = 200
 
 
 # Layers
