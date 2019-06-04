@@ -8,8 +8,25 @@ from os import path
 
 #Primeiro passo: definir a malha por onde o pernosagem se movimentará
 #o que é um "set" --> coleção de itens desordenados, sendo cada um deles único e imutável, n podendo copiá-los
-global book1
-book1 =0
+
+#HUD functions
+def draw_player_health(surf, x, y, pct):
+    if pct<0:
+        pct = 0
+    BAR_LENGTH = 200
+    BAR_HEIGHT = 40
+    fill = pct * BAR_LENGTH
+    outline_rect = pg.Rect(x,y,BAR_LENGTH, BAR_HEIGHT)
+    fill_rect = pg.Rect(x,y,fill,BAR_HEIGHT)
+    if pct > 0.6:
+        col = settings.GREEN
+    elif pct >0.3:
+        col = settings.YELLOW
+    else:
+        col = settings.RED
+    pg.draw.rect(surf, col, fill_rect)
+    pg.draw.rect(surf, settings.WHITE, outline_rect, 2)
+
 class Game: # o que vai aparecer na tela do jogo
 #    book1 = 0
     
@@ -28,7 +45,7 @@ class Game: # o que vai aparecer na tela do jogo
         img_folder = path.join(game_folder, "Sprites")
         map_folder = path.join(game_folder, "Maps")
         self.map = tilemap.TiledMap(path.join(map_folder, 'entrada.tmx'))
-        self.background = pg.image.load(path.join(img_folder, 'start.jpg')).convert
+        self.background = pg.image.load(path.join(img_folder, 'start.jpg')).convert()
         self.map_img = self.map.make_map()
         self.intro_img = pg.image.load(path.join(img_folder, settings.INTRO_IMG)).convert_alpha()
         self.map_rect = self.map_img.get_rect()
@@ -58,9 +75,12 @@ class Game: # o que vai aparecer na tela do jogo
                 if tile_object.name in ['chest']:
                     sprites.Item(self,obj_center,tile_object.name)
                     sprites.Obstacle(self, 4*tile_object.x, 4*tile_object.y, 4*tile_object.width, 4*tile_object.height)
-                if tile_object.name == 'door':
+                if tile_object.name in ['door']:
                     sprites.Item(self,obj_center,tile_object.name)
                     self.porta = sprites.Obstacle(self, 4*tile_object.x, 4*tile_object.y, 4*tile_object.width, 4*tile_object.height)
+                if tile_object.name == 'door_final':
+                    sprites.Item(self,obj_center,tile_object.name)
+                    self.porta2 = sprites.Obstacle(self, 4*tile_object.x, 4*tile_object.y, 4*tile_object.width, 4*tile_object.height)
                 if tile_object.name in ['key']:
                     sprites.Item(self,obj_center,tile_object.name)
                     self.key = sprites.Obstacle(self, 4*tile_object.x, 4*tile_object.y, 4*tile_object.width, 4*tile_object.height)
@@ -93,8 +113,20 @@ class Game: # o que vai aparecer na tela do jogo
         self.all_sprites.update() #atualizar a cada loop feito
         self.camera.update(self.player)
         keys = pg.key.get_pressed() #checa qual tecla foi pressionada
-        hits = pg.sprite.spritecollide(self.player, self.items, False) #checa colisão do player com o item
         
+        hits = pg.sprite.spritecollide(self.player, self.ninjas, False, tilemap.collide_hit_rect)
+        for hit in hits:
+            self.player.health -= settings.NINJA_DAMAGE
+            hit.vel = sprites.vec(0,0)
+            if self.player.health <=0:
+                self.playing = False
+                settings.INVENTORY = []
+                settings.PLAYER_SPEED = 300
+                settings.PLAYER_HEALTH = 100
+        if hits:
+            self.player.pos += sprites.vec(settings.NINJA_KNOCKBACK,0).rotate(-hits[0].rot)
+        
+        hits = pg.sprite.spritecollide(self.player, self.items, False) #checa colisão do player com o item      
         #mecanismo de interagir com objetos
         for hit in hits:
             #mecanismo do bau
@@ -115,22 +147,30 @@ class Game: # o que vai aparecer na tela do jogo
                             obj_center = settings.vec(4*tile_object.x + 4*tile_object.width/2, 4*tile_object.y + 4*tile_object.height / 2)
                             if tile_object.name in ['door']:
                                 sprites.Item(self,obj_center,'porta aberta') #coloca a sprite da porta aberta no lugar de onde tava a porta fechada                                
+                if hit.type == 'door_final':
+                    self.porta2.kill()
+                    for tile_object in self.map.tmxdata.objects:
+                            obj_center = settings.vec(4*tile_object.x + 4*tile_object.width/2, 4*tile_object.y + 4*tile_object.height / 2)
+                            if tile_object.name in ['door']:
+                                sprites.Item(self,obj_center,'porta aberta')
+                                self.quit()
+                    
                 if hit.type == 'key':
                    hit.kill()
                    self.key.kill()
-                   settings.INVENTORY.append('key')                 
+                   settings.INVENTORY.append('chest_key')                 
                 if hit.type == 'casaco':
                    hit.kill()
                    self.casaco.kill()
-                   settings.INVENTORY.append('casaco')
-#                    
+                   settings.INVENTORY.append('casaco')     
+                   settings.PLAYER_HEALTH += 40
+                   self.player.health += 40
 #                if hit.type == 'guarda_chuva':
 #                    hit.kill()
-#                    settings.INVENTORY.append('guarda_chuva')
-                                
+#                    settings.INVENTORY.append('guarda_chuva')                               
                 if hit.type == 'book':
                         hit.kill() #deleta o rect de colisão pra n poder pegar o livro mais de uma vez
-                        settings.PLAYER_SPEED = settings.PLAYER_SPEED*1.5  #aumenta velocidade do player em 50%
+                        settings.PLAYER_SPEED = settings.PLAYER_SPEED*1.25  #aumenta velocidade do player em 50%
 #                        fontObj = pg.font.Font('pixelated_princess.ttf', 16)
 #                        textSurfaceObj = fontObj.render('some text', True, (240,240,240), (115,117,117))
 #                        textRectObj = textSurfaceObj.get_rect()
@@ -159,6 +199,9 @@ class Game: # o que vai aparecer na tela do jogo
         if self.draw_debug:
             for wall in self.walls:
                 pg.draw.rect(self.screen, settings.YELLOW, self.camera.apply_rect(wall.rect),1)
+#        pg.draw.rect(self.screen, settings.WHITE,self.ninja.hit_rect,2 )
+        #HUD
+        draw_player_health(self.screen, 10, 10, self.player.health/settings.PLAYER_HEALTH)
         pg.display.flip()
         
     def events(self):
@@ -247,7 +290,7 @@ class Game: # o que vai aparecer na tela do jogo
             
             
             
-    def start_screen(screen, self):
+    def start_screen(self):
     # Variável para o ajuste de velocidade
         clock = pg.time.Clock()
     
@@ -263,39 +306,46 @@ class Game: # o que vai aparecer na tela do jogo
             
             # Processa os eventos (mouse, teclado, botão, etc).
             for event in pg.event.get():
-                # Verifica se foi fechado.
-                if event.type == pg.QUIT:
+#                 Verifica se foi fechado.
+                if event.type == pg.K_ESCAPE:
                     state = settings.QUIT
                     
                     running = False
     
-                if event.type == pg.K_SPACE:
-                    state = settings.QUIT
-
-                    running = False
+                if event.type == pg.KEYDOWN:
+                    if event.key == pg.K_SPACE:
+                        state = settings.GAME
+                        
+    
+                        running = False
+                                   
+                
+                    
+            
                         
             # A cada loop, redesenha o fundo e os sprites
-            screen.fill(settings.BLACK)
-            screen.blit(self.background, self.background_rect)
+            self.screen.fill(settings.BLACK)
+            self.screen.blit(self.background, self.background_rect)
     
             # Depois de desenhar tudo, inverte o display.
             pg.display.flip()
+            
+            
+            
+            
         return state
 
 
-
-    def show_start_screen(self):
-        pass
     
     def show_go_screen(self):
         pass
  
         
 g = Game()
-g.show_start_screen()
+
 
 while True:
-    g.self.start_screen()
+    g.start_screen()
     g.new()
     g.run()
     g.show_go_screen()

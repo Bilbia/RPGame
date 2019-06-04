@@ -1,8 +1,52 @@
 
 import pygame as pg
 import settings
+import tilemap
+import random
 vec = pg.math.Vector2   #transformando o player em um vetor
 
+
+def colisao_paredes(sprite, group, dir):
+    if dir == 'x':
+        hits = pg.sprite.spritecollide(sprite, group, False, tilemap.collide_hit_rect)
+        if hits:
+            if hits[0].rect.centerx > sprite.hit_rect.centerx:
+                sprite.pos.x = hits[0].rect.left - sprite.hit_rect.width / 2
+            if hits[0].rect.centerx < sprite.hit_rect.centerx:
+                sprite.pos.x = hits[0].rect.right + sprite.hit_rect.width / 2
+            sprite.vel.x = 0
+            sprite.hit_rect.centerx = sprite.pos.x
+    if dir == 'y':
+        hits = pg.sprite.spritecollide(sprite, group, False, tilemap.collide_hit_rect)
+        if hits:
+            if hits[0].rect.centery > sprite.hit_rect.centery:
+                sprite.pos.y = hits[0].rect.top - sprite.hit_rect.height / 2
+            if hits[0].rect.centery < sprite.hit_rect.centery:
+                sprite.pos.y = hits[0].rect.bottom + sprite.hit_rect.height / 2
+            sprite.vel.y = 0
+            sprite.hit_rect.centery = sprite.pos.y
+        
+def colisao_paredes2(sprite, group, dir):
+     if dir == 'x':
+        hits = pg.sprite.spritecollide(sprite, group, False)
+        if hits:
+            if sprite.vel.x > 0: #se ele tiver indo pra direita
+                sprite.pos.x = hits[0].rect.left - sprite.rect.width #posx = parte esquerda do que ele acertou - width do sprite
+            if sprite.vel.x < 0:
+                sprite.pos.x = hits[0].rect.right
+            sprite.vel.x = 0
+            sprite.rect.x = sprite.pos.x
+     if dir == 'y':
+        hits = pg.sprite.spritecollide(sprite, group, False)
+        if hits:
+            if sprite.vel.y > 0:
+                sprite.pos.y = hits[0].rect.top - sprite.rect.height
+            if sprite.vel.y < 0:
+                sprite.pos.y = hits[0].rect.bottom
+            sprite.vel.y = 0
+            sprite.rect.y = sprite.pos.y
+                
+                
 class Player(pg.sprite.Sprite):   
     def __init__(self, game, x, y):
         self.groups = game.all_sprites
@@ -16,13 +60,15 @@ class Player(pg.sprite.Sprite):
         self.image_left = pg.transform.scale(self.image_left, (64,112)) 
         self.rect = self.image_right.get_rect()
         self.rect = self.image_left.get_rect()
+        self.hit_rect = settings.PLAYER_HIT_RECT
+        self.hit_rect.center = self.rect.center
         self.rect.center= (x,y)
         self.vel = vec(0,0)
         self.pos = vec(x,y) 
+        self.health = settings.PLAYER_HEALTH
     
     def get_keys(self):
         self.vel = vec(0,0)
-        self.vx, self.vy = 0, 0
         keys = pg.key.get_pressed()
         if keys[pg.K_LEFT] or keys[pg.K_a]:
             self.vel.x = -settings.PLAYER_SPEED     
@@ -36,34 +82,18 @@ class Player(pg.sprite.Sprite):
             self.vel.y = settings.PLAYER_SPEED
         if self.vel.x != 0 and self.vel.y != 0:
             self.vel *= 0.7071
-        
-    def colisao_paredes(self, dir):
-        if dir == 'x':
-            hits = pg.sprite.spritecollide(self, self.game.walls, False)
-            if hits:
-                if self.vel.x > 0:
-                    self.pos.x = hits[0].rect.left - self.rect.width
-                if self.vel.x < 0:
-                    self.pos.x = hits[0].rect.right
-                self.vel.x = 0
-                self.rect.x = self.pos.x
-        if dir == 'y':
-            hits = pg.sprite.spritecollide(self, self.game.walls, False)
-            if hits:
-                if self.vel.y > 0:
-                    self.pos.y = hits[0].rect.top - self.rect.height
-                if self.vel.y < 0:
-                    self.pos.y = hits[0].rect.bottom
-                self.vel.y = 0
-                self.rect.y = self.pos.y
+
         
     def update(self):
         self.get_keys()
+        self.rect = self.image.get_rect()
+        self.rect.center = self.pos
         self.pos += self.vel * self.game.dt
-        self.rect.x = self.pos.x
-        self.colisao_paredes('x')
-        self.rect.y = self.pos.y
-        self.colisao_paredes('y')
+        self.hit_rect.centerx = self.pos.x
+        colisao_paredes(self, self.game.walls, 'x')
+        self.hit_rect.centery = self.pos.y
+        colisao_paredes(self, self.game.walls, 'y')
+        self.rect.center = self.hit_rect.center
         
 
 class Ninja(pg.sprite.Sprite):
@@ -72,36 +102,54 @@ class Ninja(pg.sprite.Sprite):
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         self.image = game.ninja_img    
-        self.image = pg.transform.scale(self.image, (64, 112)) #o personagem eh da escala 4x7, entao so podemos fazer multiplos desses para n distorcer a imagem
         self.image_right = game.ninja_img
         self.image_left = pg.transform.flip(game.ninja_img, True, False)
-        self.image_right = pg.transform.scale(self.image_right, (64,112))
-        self.image_left = pg.transform.scale(self.image_left, (64,112)) 
         self.rect = self.image.get_rect()
+        self.rect = self.image_right.get_rect()
+        self.rect = self.image_left.get_rect()
+        self.hit_rect = settings.NINJA_HIT_RECT.copy()
+        self.hit_rect.center = self.rect.center
         self.rect.center= (x,y)
         self.vel = vec(0,0)
+        self.acc = vec(0,0)
         self.pos = vec(x,y) 
         self.rot = 0 
-        
+        self.speed = random.choice(settings.NINJA_SPEED)
+        self.target = game.player
+    
+    def avoid_mobs(self):
+        for ninja in self.game.ninjas:
+            if ninja != self:
+                dist = self.pos - ninja.pos
+                if 0 < dist.length() <settings.AVOID_RADIUS:
+                    self.acc += dist.normalize()
     def update(self):
-        #código pra fazer o mob estar sempre olhando pro player
-        self.rot = (self.game.player.pos - self.pos).angle_to(vec(1, 0))
-        if self.rot<180 and self.rot>90:
-            self.image = self.image_left
-        elif self.rot>(-180) and self.rot<(-90):
-            self.image = self.image_left
-        else:
-            self.image = self.image_right
-        self.rect = self.image.get_rect()
-        self.rect.center = self.pos
-#        self.acc = vec(settings.NINJA_SPEED, 0).rotate(-self.rot)
-#        self.acc += self.vel * -1
-#        self.vel += self.acc * self.game.dt
-#        self.pos += self.vel * self.game.dt + 0.5 *  self.acc * self.game.dt ** 2
-#        self.rect.centerx = self.pos.x
-##        colisao_paredes(self, self.game.walls, 'x')
-#        self.rect.centery = self.pos.y
-##        colisao_paredes(self, self.game.walls, 'y')
+        target_dist = self.target.pos - self.pos
+        if target_dist.length_squared() < settings.DETECT_RADIUS**2:
+            #código pra fazer o mob estar sempre olhando pro player
+            self.rot = target_dist.angle_to(vec(1, 0))
+            if self.rot<180 and self.rot>90:
+                self.image = self.image_left
+            elif self.rot>(-180) and self.rot<(-90):
+                self.image = self.image_left
+            else:
+                self.image = self.image_right
+            self.rect = self.image.get_rect()
+            self.rect.center = self.pos
+            self.acc = vec(1,0).rotate(-self.rot)
+            self.avoid_mobs()
+            self.acc.scale_to_length(self.speed)
+            self.acc += self.vel * -1
+            self.vel += self.acc * self.game.dt
+            self.pos += self.vel * self.game.dt + 0.5 * self.acc *self.game.dt **2
+    #        self.hit_rect.centerx = self.pos.x
+            self.rect.x = self.pos.x
+            colisao_paredes2(self, self.game.walls, 'x')
+    #        self.hit_rect.centery = self.pos.y
+            self.rect.y = self.pos.y
+            colisao_paredes2(self, self.game.walls, 'y')
+    #        print (self.rect.y)
+    #        self.rect.center = self.hit_rect.center           
         
         
 class Wall(pg.sprite.Sprite):

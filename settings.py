@@ -25,10 +25,12 @@ TILESIZE = 64
 GRIDWIDTH = WIDTH / TILESIZE
 GRIDHEIGHT = HEIGHT / TILESIZE
 
-#Player Settings 
 
+#Player Settings 
 PLAYER_SPEED = 300
 PLAYER_IMG = 'raposa pequena.png'   #imagem do player
+PLAYER_HIT_RECT = pg.Rect(0,0,64,112)
+PLAYER_HEALTH = 100
 
     
 #Intro Image
@@ -37,8 +39,12 @@ INTRO_IMG = 'start.jpg'
 
 #Ninja Settings
 NINJA_IMG = 'ninja 1.2.png'
-#NINJA_SPEED = 200
-
+NINJA_SPEED = [200,150,175,100,75,125]
+NINJA_HIT_RECT = pg.Rect(0,0,64,64)
+NINJA_DAMAGE = 10
+NINJA_KNOCKBACK = 20
+AVOID_RADIUS = 50
+DETECT_RADIUS = 1600
 
 # Layers
 WALL_LAYER = 1
@@ -59,7 +65,8 @@ ITEM_IMAGES = {
         'key': 'chave.png',
         'casaco': 'casaco.png',
 #        'guarda_chuva': 'guarda_chuva.png'
-        'book': 'invisivel.png'        
+        'book': 'invisivel.png',
+        'door_final' : 'porta trancada.png'        
 }
 
 ITEMS_MAP = {
@@ -80,7 +87,6 @@ ITEMS_MAP = {
 }
 
 INVENTORY = [
-        "chest_key"
         ]
 
 
@@ -96,8 +102,8 @@ clock = pg.time.Clock()
 gameDisplay = pg.display.set_mode((WIDTH,HEIGHT))
 pg.display.set_caption('Backpack')
 
-
-QUIT = 2
+GAME = 0
+QUIT = 1
 
 
 
