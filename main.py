@@ -28,7 +28,7 @@ class Game: # o que vai aparecer na tela do jogo
         img_folder = path.join(game_folder, "Sprites")
         map_folder = path.join(game_folder, "Maps")
         self.map = tilemap.TiledMap(path.join(map_folder, 'entrada.tmx'))
-        self.background = pg.image.load(path.join(img_folder, 'start.jpg')).convert
+        self.background = pg.image.load(path.join(img_folder, 'start.jpg')).convert()
         self.map_img = self.map.make_map()
         self.intro_img = pg.image.load(path.join(img_folder, settings.INTRO_IMG)).convert_alpha()
         self.map_rect = self.map_img.get_rect()
@@ -167,6 +167,9 @@ class Game: # o que vai aparecer na tela do jogo
             if event.type == pg.QUIT:
                 self.quit()
             if event.type == pg.KEYDOWN:
+                
+                 
+                
                 if event.key == pg.K_i:
                     Game.inventory()
                         
@@ -247,7 +250,7 @@ class Game: # o que vai aparecer na tela do jogo
             
             
             
-    def start_screen(screen, self):
+    def start_screen(self):
     # Variável para o ajuste de velocidade
         clock = pg.time.Clock()
     
@@ -263,39 +266,46 @@ class Game: # o que vai aparecer na tela do jogo
             
             # Processa os eventos (mouse, teclado, botão, etc).
             for event in pg.event.get():
-                # Verifica se foi fechado.
-                if event.type == pg.QUIT:
+#                 Verifica se foi fechado.
+                if event.type == pg.K_ESCAPE:
                     state = settings.QUIT
                     
                     running = False
     
-                if event.type == pg.K_SPACE:
-                    state = settings.QUIT
-
-                    running = False
+                if event.type == pg.KEYDOWN:
+                    if event.key == pg.K_SPACE:
+                        state = settings.GAME
+                        
+    
+                        running = False
+                                   
+                
+                    
+            
                         
             # A cada loop, redesenha o fundo e os sprites
-            screen.fill(settings.BLACK)
-            screen.blit(self.background, self.background_rect)
+            self.screen.fill(settings.BLACK)
+            self.screen.blit(self.background, self.background_rect)
     
             # Depois de desenhar tudo, inverte o display.
             pg.display.flip()
+            
+            
+            
+            
         return state
 
 
-
-    def show_start_screen(self):
-        pass
     
     def show_go_screen(self):
         pass
  
         
 g = Game()
-g.show_start_screen()
+#g.show_start_screen()
 
 while True:
-    g.self.start_screen()
+    g.start_screen()
     g.new()
     g.run()
     g.show_go_screen()

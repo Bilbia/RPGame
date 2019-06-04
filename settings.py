@@ -96,8 +96,8 @@ clock = pg.time.Clock()
 gameDisplay = pg.display.set_mode((WIDTH,HEIGHT))
 pg.display.set_caption('Backpack')
 
-
-QUIT = 2
+GAME = 0
+QUIT = 1
 
 
 
