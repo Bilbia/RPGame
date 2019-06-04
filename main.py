@@ -218,13 +218,23 @@ class Game: # o que vai aparecer na tela do jogo
                         pg.quit()
                         quit()
             settings.gameDisplay.fill(settings.BLACK)
+
+            
+                    
             Game.message_to_screen("Inventory",
-                              settings.WHITE,
-                               -200,
-                              size = "large")
+                                   settings.WHITE,
+                                   -200,
+                                   size = "medium")
+            
             Game.message_to_screen("press Q to quit or c to continue",
-                              settings.WHITE,
-                              200)
+                                   settings.WHITE,
+                                   200,
+                                   size = "small")
+            
+            Game.message_to_screen("{0}".format(settings.INVENTORY),
+                                   settings.WHITE,
+                                   100,
+                                   size = "small")
             
             pg.display.update()
             settings.clock.tick(5)
