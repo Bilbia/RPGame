@@ -165,22 +165,8 @@ class Game: # o que vai aparecer na tela do jogo
             if event.type == pg.QUIT:
                 self.quit()
             if event.type == pg.KEYDOWN:
-#                if event.key == pg.K_I: #aparecer tela com inventário
-#                    ITEMS_MAP = True
-#                    while ITEMS_MAP:
-#                        self.clock.tick(settings.FPS)
-#                        background_colour = (255,255,255)
-#                        (width, height) = (300, 200)
-#                        screen = pg.display.set_mode((width, height))
-#                        pg.display.set_caption('Tutorial 1')
-#                        screen.fill(background_colour)
-#                        pg.display.flip()
-#                        running = True
-#                        while running:
-#                          for event in pg.event.get():
-#                            if event.type == pg.QUIT:
-#                              running = False
-                        
+                if event.key == pg.K_i:
+                    Game.inventory()
                         
                 if event.key == pg.K_ESCAPE:
                     self.quit()
@@ -200,7 +186,50 @@ class Game: # o que vai aparecer na tela do jogo
                     
                 if event.key == pg.K_h:
                     self.draw_debug = not self.draw_debug
+                    
+    def text_objects(text,color,size):
+        if size == "small":
+            textSurface = settings.smallfont.render(text, True, color)
+        elif size == "medium":
+            textSurface = settings.medfont.render(text, True, color)
+        elif size == "large":
+            textSurface = settings.largefont.render(text, True, color)
+
+    
+        return textSurface, textSurface.get_rect()
+              
+    def message_to_screen(msg,color, y_displace=0, size = "small"):
+        textSurf, textRect = Game.text_objects(msg,color, size)
+        textRect.center = (settings.WIDTH2 / 2), (settings.HEIGHT2/ 2)+y_displace
+        settings.gameDisplay.blit(textSurf, textRect)
+        
+        
+    def inventory():
+        invent = True
+        while invent:
+            for event in pg.event.get(): # --> chamar função para sair do jogo
+                if event.type == pg.QUIT:
+                    pg.quit()
+                    quit()
+                if event.type == pg.KEYDOWN:
+                    if event.key ==pg.K_c:
+                        invent = False
+                    elif event.key == pg.K_q:
+                        pg.quit()
+                        quit()
+            settings.gameDisplay.fill(settings.BLACK)
+            Game.message_to_screen("Inventory",
+                              settings.WHITE,
+                               -200,
+                              size = "large")
+            Game.message_to_screen("press Q to quit or c to continue",
+                              settings.WHITE,
+                              200)
             
+            pg.display.update()
+            settings.clock.tick(5)
+            
+
         
                 
                 

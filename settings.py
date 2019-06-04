@@ -82,7 +82,17 @@ INVENTORY = [
         ]
 
 
+#config. para textos
+smallfont = pg.font.SysFont("comicsansms", 25)
+medfont = pg.font.SysFont("comicsansms", 50)
+largefont = pg.font.SysFont("comicsansms", 80)
+WIDTH2 = screenInfo.current_w  # 16 * 64 or 32 * 32 or 64 * 16
+HEIGHT2 = screenInfo.current_h - 28  # 16 * 48 or 32 * 24 or 64 * 12
 
+clock = pg.time.Clock()
+
+gameDisplay = pg.display.set_mode((WIDTH,HEIGHT))
+pg.display.set_caption('Slither')
 
 
 
