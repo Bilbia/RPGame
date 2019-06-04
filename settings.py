@@ -1,5 +1,7 @@
+from os import path
 import pygame as pg
 vec = pg.math.Vector2
+
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -92,7 +94,10 @@ HEIGHT2 = screenInfo.current_h - 28  # 16 * 48 or 32 * 24 or 64 * 12
 clock = pg.time.Clock()
 
 gameDisplay = pg.display.set_mode((WIDTH,HEIGHT))
-pg.display.set_caption('Slither')
+pg.display.set_caption('Backpack')
+
+
+QUIT = 2
 
 
 
