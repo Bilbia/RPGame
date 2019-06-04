@@ -1,4 +1,3 @@
-
 import pygame as pg
 import sys
 import settings  
@@ -7,11 +6,12 @@ import tilemap
 import os
 from os import path
 
-
 #Primeiro passo: definir a malha por onde o pernosagem se movimentará
 #o que é um "set" --> coleção de itens desordenados, sendo cada um deles único e imutável, n podendo copiá-los
-
+global book1
+book1 =0
 class Game: # o que vai aparecer na tela do jogo
+#    book1 = 0
     
     #chuva de funções iniciais
     
@@ -30,7 +30,6 @@ class Game: # o que vai aparecer na tela do jogo
         self.map = tilemap.TiledMap(path.join(map_folder, 'entrada.tmx'))
         self.map_img = self.map.make_map()
         self.intro_img = pg.image.load(path.join(img_folder, settings.INTRO_IMG)).convert_alpha()
-#        self.map_img = pg.transform.scale(self.map_img,(4*settings.WIDTH,4*settings.HEIGHT))
         self.map_rect = self.map_img.get_rect()
         self.player_img = pg.image.load(path.join(img_folder, settings.PLAYER_IMG)).convert_alpha()  #imagem do player
         self.item_images = {}
@@ -45,12 +44,13 @@ class Game: # o que vai aparecer na tela do jogo
             self.items = pg.sprite.Group()
             self.ninjas = pg.sprite.Group()
             
+            #define onde sprites vão ser desenhados baseado no mapa tmx
             for tile_object in self.map.tmxdata.objects:
                 obj_center = settings.vec(4*tile_object.x + 4*tile_object.width/2, 4*tile_object.y + 4*tile_object.height / 2)
                 if tile_object.name == 'player':
-                    self.player = sprites.Player(self, obj_center.x, obj_center.y)
+                    self.player = sprites.Player(self, obj_center.x, obj_center.y) #define spawn point do player
                 if tile_object.name == 'wall':
-                        sprites.Obstacle(self, 4*tile_object.x, 4*tile_object.y, 4*tile_object.width, 4*tile_object.height)
+                    sprites.Obstacle(self, 4*tile_object.x, 4*tile_object.y, 4*tile_object.width, 4*tile_object.height) #cria obstáculo das paredes pra colisão
                 if tile_object.name == 'ninja':
                     sprites.Ninja(self, obj_center.x, obj_center.y)
                 if tile_object.name in ['chest']:
@@ -58,21 +58,20 @@ class Game: # o que vai aparecer na tela do jogo
                     sprites.Obstacle(self, 4*tile_object.x, 4*tile_object.y, 4*tile_object.width, 4*tile_object.height)
                 if tile_object.name == 'door':
                     sprites.Item(self,obj_center,tile_object.name)
-                    self.porta = self.rect = sprites.Obstacle(self, 4*tile_object.x, 4*tile_object.y, 4*tile_object.width, 4*tile_object.height)
-#                    return porta
+                    self.porta = sprites.Obstacle(self, 4*tile_object.x, 4*tile_object.y, 4*tile_object.width, 4*tile_object.height)
                 if tile_object.name in ['key']:
                     sprites.Item(self,obj_center,tile_object.name)
                     self.key = sprites.Obstacle(self, 4*tile_object.x, 4*tile_object.y, 4*tile_object.width, 4*tile_object.height)
-
                 if tile_object.name in ['casaco']:
                     sprites.Item(self,obj_center,tile_object.name)
-                    sprites.Obstacle(self, 4*tile_object.x, 4*tile_object.y, 4*tile_object.width, 4*tile_object.height)
-#                    
+                    self.casaco = sprites.Obstacle(self, 4*tile_object.x, 4*tile_object.y, 4*tile_object.width, 4*tile_object.height)                    
 #                if tile_object.name in ['guarda_chuva']:
 #                    sprites.Item(self,obj_center,tile_object.name)
 #                    sprites.Obstacle(self, 4*tile_object.x, 4*tile_object.y, 4*tile_object.width, 4*tile_object.height)
-                    
-                
+                if tile_object.name == 'book':
+                    sprites.Item(self,obj_center,tile_object.name)
+                    sprites.Obstacle(self, 4*tile_object.x, 4*tile_object.y, 4*tile_object.width, 4*tile_object.height)
+
             self.camera = tilemap.Camera(self.map.width, self.map.height)
             self.draw_debug = False
            
@@ -91,7 +90,7 @@ class Game: # o que vai aparecer na tela do jogo
     def update(self):
         self.all_sprites.update() #atualizar a cada loop feito
         self.camera.update(self.player)
-        keys = pg.key.get_pressed()
+        keys = pg.key.get_pressed() #checa qual tecla foi pressionada
         hits = pg.sprite.spritecollide(self.player, self.items, False) #checa colisão do player com o item
         
         #mecanismo de interagir com objetos
@@ -109,25 +108,34 @@ class Game: # o que vai aparecer na tela do jogo
                 #mecanismo da porta
                 if hit.type == 'door':
                     if 'door_key' in settings.INVENTORY: #checa se a chave da porta tá no inventário
-                        self.porta.kill()
+                        self.porta.kill() #deleta o rect que causa a colisão e permite atravessar
                         for tile_object in self.map.tmxdata.objects:
                             obj_center = settings.vec(4*tile_object.x + 4*tile_object.width/2, 4*tile_object.y + 4*tile_object.height / 2)
                             if tile_object.name in ['door']:
-                                sprites.Item(self,obj_center,'porta aberta')
-                                
+                                sprites.Item(self,obj_center,'porta aberta') #coloca a sprite da porta aberta no lugar de onde tava a porta fechada                                
                 if hit.type == 'key':
                    hit.kill()
                    self.key.kill()
-                   settings.INVENTORY.append('key')
-                   
+                   settings.INVENTORY.append('key')                 
                 if hit.type == 'casaco':
                    hit.kill()
-                   self.key.kill()
+                   self.casaco.kill()
                    settings.INVENTORY.append('casaco')
 #                    
 #                if hit.type == 'guarda_chuva':
 #                    hit.kill()
 #                    settings.INVENTORY.append('guarda_chuva')
+                                
+                if hit.type == 'book':
+                        hit.kill() #deleta o rect de colisão pra n poder pegar o livro mais de uma vez
+                        settings.PLAYER_SPEED = settings.PLAYER_SPEED*1.5  #aumenta velocidade do player em 50%
+#                        fontObj = pg.font.Font('pixelated_princess.ttf', 16)
+#                        textSurfaceObj = fontObj.render('some text', True, (240,240,240), (115,117,117))
+#                        textRectObj = textSurfaceObj.get_rect()
+#                        textRectObj.center  = (350, 30)
+#                        self.screen.blit(textSurfaceObj, textRectObj)
+#                        pg.display.update()
+                   
 
     def draw_grid(self):
         for x in range(0, settings.WIDTH, settings.TILESIZE):
@@ -157,21 +165,21 @@ class Game: # o que vai aparecer na tela do jogo
             if event.type == pg.QUIT:
                 self.quit()
             if event.type == pg.KEYDOWN:
-                if event.key == pg.K_I: #aparecer tela com inventário
-                    ITEMS_MAP = True
-                    while ITEMS_MAP:
-                        self.clock.tick(settings.FPS)
-                        background_colour = (255,255,255)
-                        (width, height) = (300, 200)
-                        screen = pg.display.set_mode((width, height))
-                        pg.display.set_caption('Tutorial 1')
-                        screen.fill(background_colour)
-                        pg.display.flip()
-                        running = True
-                        while running:
-                          for event in pg.event.get():
-                            if event.type == pg.QUIT:
-                              running = False
+#                if event.key == pg.K_I: #aparecer tela com inventário
+#                    ITEMS_MAP = True
+#                    while ITEMS_MAP:
+#                        self.clock.tick(settings.FPS)
+#                        background_colour = (255,255,255)
+#                        (width, height) = (300, 200)
+#                        screen = pg.display.set_mode((width, height))
+#                        pg.display.set_caption('Tutorial 1')
+#                        screen.fill(background_colour)
+#                        pg.display.flip()
+#                        running = True
+#                        while running:
+#                          for event in pg.event.get():
+#                            if event.type == pg.QUIT:
+#                              running = False
                         
                         
                 if event.key == pg.K_ESCAPE:
@@ -202,14 +210,11 @@ class Game: # o que vai aparecer na tela do jogo
     def show_go_screen(self):
         pass
  
-    
-#objeto do jogo
         
 g = Game()
 g.show_start_screen()
 
 while True:
-#    g.game_intro()
     g.new()
     g.run()
     g.show_go_screen()

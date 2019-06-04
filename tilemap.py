@@ -55,6 +55,9 @@ class TiledMap:
 
 class Camera:
     def __init__(self, width, height):
+#        tm = ptx.load_pygame(filename, pixelalpha=True)
+#        self.mapw = tm.width
+#        self.maph = tm.height
         self.camera = pg.Rect(0, 0, width, height)
         self.width = width
         self.height = height    
@@ -71,8 +74,8 @@ class Camera:
         
         x = min(0, x)
         y = min(0, y)
-#        x = max( -settings.WIDTH, x)
-#        y = max(-settings.HEIGHT, y)
+#        x = max(self.mapw, x)
+#        y = max(self.maph, y)
 #        x = max(-(self.width - settings.WIDTH), x)
 #        y = max(-(self.height - settings.HEIGHT), y)
         self.camera = pg.Rect(x, y, self.width, self.height)

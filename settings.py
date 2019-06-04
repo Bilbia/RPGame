@@ -35,7 +35,7 @@ INTRO_IMG = 'start.jpg'
 
 #Ninja Settings
 NINJA_IMG = 'ninja 1.2.png'
-NINJA_SPEED = 200
+#NINJA_SPEED = 200
 
 
 # Layers
@@ -57,7 +57,7 @@ ITEM_IMAGES = {
         'key': 'chave.png',
         'casaco': 'casaco.png',
 #        'guarda_chuva': 'guarda_chuva.png'
-        
+        'book': 'invisivel.png'        
 }
 
 ITEMS_MAP = {
