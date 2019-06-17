@@ -144,8 +144,7 @@ class Ninja(pg.sprite.Sprite):
             self.pos += self.vel * self.game.dt + 0.5 * self.acc *self.game.dt **2
     #        self.hit_rect.centerx = self.pos.x
             self.rect.x = self.pos.x
-            colisao_paredes2(self, self.game.walls, 'x')
-    #        self.hit_rect.centery = self.pos.y
+            colisao_paredes2(self, self.game.walls, 'x')    #        self.hit_rect.centery = self.pos.y
             self.rect.y = self.pos.y
             colisao_paredes2(self, self.game.walls, 'y')
     #        print (self.rect.y)
